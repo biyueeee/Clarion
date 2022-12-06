@@ -18,24 +18,28 @@ def read_fasta(inputfile):
         sys.exit(1)
 
     data = {}
-    count = 0
+
     for line in record:
         if line.startswith('>'):
             name = line.replace('>', '').split('\n')[0]
             data[name] = ''
         else:
-            if len(line) <= 3000:
-                data[name] += line.replace('\n', '')
-            else:
-                count += 1
-                line = line.replace('\n', '')
-                line_cut = line[:3000] +line[-3000:]
-                data[name] += line_cut
+            data[name] += line.replace('\n', '')
 
-    if count > 1:
-        print('Warning: some fasta sequences will be truncated less than 6000 nt.')
+    count = 0
+    new_data = {}
+    for i in data:
+        seq = data[i]
+        if len(seq) > 6000:
+            count += 1
+            new_data[i] = seq[:3000] + seq[-3000:]
+        else:
+            new_data[i] = seq
 
-    return data
+    #if count > 1:
+        #print('Warning: some fasta sequences will be truncated less than 6000 nt.')
+
+    return new_data
 
 
 
